@@ -11,7 +11,7 @@
 ### Install
 
 ```
-$ git clone <TODO>
+$ git clone git@github.com:Machinalabs/remix-optimism-compiler-plugin.git
 
 $ yarn
 
@@ -20,7 +20,7 @@ $ yarn
 ### Commands
 
 ```
-$ yarn start # start development project
+$ yarn start:dev # start development project
 
 $ yarn deploy # deploy to surge
 
