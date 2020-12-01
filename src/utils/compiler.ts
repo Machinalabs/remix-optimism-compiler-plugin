@@ -100,7 +100,8 @@ export class Compiler {
         continue
       }
       let match: RegExpExecArray | null
-      while ((match = importRegex.exec(files[fileName].content))) { // tslint:disable-line
+      while ((match = importRegex.exec(files[fileName].content))) {
+        // tslint:disable-line
         let importFilePath = match[1]
         if (importFilePath.startsWith("./")) {
           const path: RegExpExecArray | null = /(.*\/).*/.exec(fileName)
