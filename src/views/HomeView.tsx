@@ -21,11 +21,11 @@ type CompilerVersion = {
 const COMPILER_VERSIONS: CompilerVersion[] = [
   {
     version: "0.5.16",
-    url: "http://solc-js-0-5-16.surge.sh/soljson.js",
+    url: "https://solc-js-0-5-16.surge.sh/soljson.js",
   },
   {
     version: "0.5.17",
-    url: "http://solc-js-0-5-16.surge.sh/soljson.js",
+    url: "https://solc-js-0-5-16.surge.sh/soljson.js",
   },
 ]
 
