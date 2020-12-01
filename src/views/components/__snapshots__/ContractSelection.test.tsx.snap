@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ContractSelection tests snapshot 1`] = `
+<div>
+  <select
+    class="custom-select"
+    data-id="compiledContracts"
+    id="compiledContracts"
+  >
+    $
+    <option
+      value="Timer"
+    >
+      Timer (Timer.sol)
+    </option>
+  </select>
+</div>
+`;
