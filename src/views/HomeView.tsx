@@ -60,10 +60,10 @@ export const HomeView: React.FC = () => {
 
   useEffect(() => {
     const loadCompiler = async (compilerUrl: string) => {
-      const compilerInstance = new Compiler(clientInstance)
-      setCompilerInstance(compilerInstance)
+      const compilerInstanceValue = new Compiler(clientInstance)
+      setCompilerInstance(compilerInstanceValue)
 
-      await compilerInstance.loadVersion(compilerUrl)
+      await compilerInstanceValue.loadVersion(compilerUrl)
       setCompilerLoaded(true)
       log("Compiler loaded correctly")
     }
@@ -173,8 +173,8 @@ export const HomeView: React.FC = () => {
             let position = item.formattedMessage.match(
               /^(.*?):([0-9]*?):([0-9]*?)?/
             )
-            const errorLine = position ? parseInt(position[2]) - 1 : -1
-            const errorColumn = position ? parseInt(position[3]) : -1
+            const errorLine = position ? parseInt(position[2], 10) - 1 : -1
+            const errorColumn = position ? parseInt(position[3], 10) : -1
 
             position = item.formattedMessage.match(/^(https:.*?|http:.*?|.*?):/)
             // To think if I need this: const errorFile = position ? position[1] : ''
@@ -266,7 +266,11 @@ export const HomeView: React.FC = () => {
                 >
                   {COMPILER_VERSIONS.map((item) => {
                     return (
-                      <option key={item.version} disabled value={item.version}>
+                      <option
+                        key={item.version}
+                        disabled={true}
+                        value={item.version}
+                      >
                         {item.version}
                       </option>
                     )
@@ -329,7 +333,7 @@ export const HomeView: React.FC = () => {
                     id="autoCompile"
                     type="checkbox"
                     title="Auto compile"
-                  ></input>
+                  />
                   <label
                     className="form-check-label custom-control-label"
                     htmlFor="autoCompile"
@@ -372,7 +376,7 @@ export const HomeView: React.FC = () => {
                     id="hideWarningsBox"
                     type="checkbox"
                     title="Hide warnings"
-                  ></input>
+                  />
                   <label
                     className="form-check-label custom-control-label"
                     htmlFor="hideWarningsBox"

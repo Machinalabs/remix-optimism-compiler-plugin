@@ -15,9 +15,10 @@ export interface SourceWithTarget {
   target?: string | null | undefined
 }
 
-export interface gatherImportsCallbackInterface {
-  (err?: Error | null, result?: SourceWithTarget): any
-}
+export type gatherImportsCallbackInterface = (
+  err?: Error | null,
+  result?: SourceWithTarget
+) => any
 
 export type EVMVersion =
   | "homestead"

@@ -23,20 +23,20 @@ export class Compiler {
 
   async loadVersion(compilerUrl: string) {
     return new Promise((resolve, reject) => {
-      delete (window as any)["Module"] // TODO Improve typing
+      delete (window as any).Module // TODO Improve typing
       // NOTE: workaround some browsers?
-      ;(window as any)["Module"] = undefined
+      ;(window as any).Module = undefined
       const newScript: HTMLScriptElement = document.createElement("script")
       newScript.type = "text/javascript"
       newScript.src = compilerUrl
       document.getElementsByTagName("head")[0].appendChild(newScript)
 
       const check: number = window.setInterval(() => {
-        if (!(window as any)["Module"]) {
+        if (!(window as any).Module) {
           return
         }
         window.clearInterval(check)
-        const compiler: any = wrapper((window as any)["Module"])
+        const compiler: any = wrapper((window as any).Module)
         this.compiler = compiler
         resolve(true)
       }, 200)
@@ -64,9 +64,9 @@ export class Compiler {
         )
       }
     } catch (exception) {
-      result = exception //{ errors: [{ formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' }] } // mode: 'panic' ?
+      result = exception // { errors: [{ formattedMessage: 'Uncaught JavaScript exception:\n' + exception, severity: 'error', mode: 'panic' }] } // mode: 'panic' ?
     }
-    return result //{
+    return result // {
     // result,
     // missingInputs,
     // source
@@ -96,8 +96,11 @@ export class Compiler {
     // const result = {}
     const importRegex = /^\s*import\s*['"]([^'"]+)['"];/g
     for (const fileName in files) {
+      if (!fileName) {
+        continue
+      }
       let match: RegExpExecArray | null
-      while ((match = importRegex.exec(files[fileName].content))) {
+      while ((match = importRegex.exec(files[fileName].content))) { // tslint:disable-line
         let importFilePath = match[1]
         if (importFilePath.startsWith("./")) {
           const path: RegExpExecArray | null = /(.*\/).*/.exec(fileName)

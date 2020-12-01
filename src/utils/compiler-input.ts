@@ -3,7 +3,7 @@ import { CompilerInput, Source, CompilerInputOptions } from "../types"
 export default (sources: Source, opts: CompilerInputOptions): string => {
   const o: CompilerInput = {
     language: "Solidity",
-    sources: sources,
+    sources,
     settings: {
       optimizer: {
         enabled: opts.optimize === true || opts.optimize === 1,

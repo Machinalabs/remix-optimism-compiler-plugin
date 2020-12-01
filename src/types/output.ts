@@ -76,16 +76,16 @@ export interface CompilationSource {
 /////////
 export interface AstNode {
   absolutePath?: string
-  exportedSymbols?: Object
+  exportedSymbols?: object
   id: number
   nodeType: string
-  nodes?: Array<AstNode>
+  nodes?: AstNode[]
   src: string
-  literals?: Array<string>
+  literals?: string[]
   file?: string
   scope?: number
   sourceUnit?: number
-  symbolAliases?: Array<string>
+  symbolAliases?: string[]
   [x: string]: any
 }
 
@@ -97,7 +97,7 @@ export interface AstNodeAtt {
   constant?: boolean
   name?: string
   public?: boolean
-  exportedSymbols?: Object
+  exportedSymbols?: object
   argumentTypes?: null
   absolutePath?: string
   [x: string]: any
