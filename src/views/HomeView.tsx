@@ -206,9 +206,10 @@ export const HomeView: React.FC = () => {
         const currentFile = currentFileName
           ? currentFileName
           : await clientInstance.fileManager.getCurrentFile()
-        console.log("Current file onCompile click", currentFile)
 
-        if (!hasSolidityExtension(currentFile)) return
+        if (!hasSolidityExtension(currentFile)) {
+          return
+        }
 
         setStatusToLoading()
         await clearAnnotations()
