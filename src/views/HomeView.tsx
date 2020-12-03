@@ -112,6 +112,11 @@ export const HomeView: React.FC = () => {
         }
       })
 
+      clientInstance.on("fileManager", "fileSaved" as any, (file: string) => {
+        if (autoCompileRef.current) {
+          setIsCompiling(true)
+        }
+      })
       // const getCurrentFile = async () => {
       //   const currentFile = await clientInstance.fileManager.getCurrentFile()
       //   setCurrentFileName(currentFile)
