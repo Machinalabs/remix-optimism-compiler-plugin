@@ -92,8 +92,6 @@ export const HomeView: React.FC = () => {
   const [showWarnings, setShowWarnings] = useState(false)
   const [runs, setRuns] = useState(DEFAULT_RUNS)
 
-  // flow
-  // TODO const [isSolFileSelected, setIsSolFileSelected] = useState() // TODO: Initially I need to call Remix API Client to know
   const [currentFileName, setCurrentFileName] = useState<string | undefined>() // TODO
   const [isCompiling, setIsCompiling] = useState(false)
 
@@ -113,6 +111,12 @@ export const HomeView: React.FC = () => {
           setIsCompiling(true)
         }
       })
+
+      // const getCurrentFile = async () => {
+      //   const currentFile = await clientInstance.fileManager.getCurrentFile()
+      //   setCurrentFileName(currentFile)
+      // }
+      // getCurrentFile()
     }
   }, [clientInstance])
 
@@ -216,6 +220,13 @@ export const HomeView: React.FC = () => {
         log("CompilationResult", result)
         setCompilationResult(result)
         setIsCompiling(false)
+        clientInstance.emit(
+          "compilationFinished",
+          currentFileName,
+          sources,
+          selectedCompilerVersion,
+          result
+        )
 
         if (result.errors) {
           setStatusToFailed()
@@ -237,6 +248,7 @@ export const HomeView: React.FC = () => {
     language,
     optimize,
     runs,
+    selectedCompilerVersion,
   ])
 
   if (!compilerLoaded) {
