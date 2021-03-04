@@ -3,90 +3,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSync } from "@fortawesome/free-solid-svg-icons"
 import { CompilationError, CompilationResult } from "@remixproject/plugin-api"
 
-import {
-  getCleanedFileName,
-  hasSolidityExtension,
-  log,
-  Compiler,
-} from "../utils"
-import { useRemix } from "../hooks"
+import { FileLoader, getCleanedFileName, hasSolidityExtension, log } from "../utils"
+import { EVMVersionEnum, LanguageEnum } from '../types'
+import { useRemix, useCompiler, Version } from "../hooks"
 
 import { ResultsSection, StyledSection } from "./components"
 
-type CompilerVersion = {
-  version: string
-  url: string
-}
-
-const COMPILER_VERSIONS: CompilerVersion[] = [
-  {
-    version: "0.5.16",
-    url: "https://solc-js-0-5-16.surge.sh/soljson.js",
-  },
-  {
-    version: "0.5.17",
-    url: "https://solc-js-0-5-16.surge.sh/soljson.js",
-  },
-]
-
 const DEFAULT_RUNS = 200
 
-enum EVMVersion { // TODO Remove duplicated
-  default = "default",
-  istanbul = "istanbul",
-  petersburg = "petersburg",
-  constantinople = "constantinople",
-  byzantium = "byzantium",
-  spuriousDragon = "spuriousDragon",
-  tangerineWhistle = "tangerineWhistle",
-  homestead = "homestead",
-}
-
-enum Language { // TODO Remove duplicated
-  Solidity = "Solidity",
-  // Yul = 'Yul'
-}
-
 export const HomeView: React.FC = () => {
-  const [selectedCompilerVersion, setSelectedCompilerVersion] = useState(
-    COMPILER_VERSIONS[0].version
-  ) // Set first as default
-  const [compilerInstance, setCompilerInstance] = useState<
-    Compiler | undefined
-  >(undefined)
-  const [compilerLoaded, setCompilerLoaded] = useState(false)
-
+  const [selectedCompilerVersion, setSelectedCompilerVersion] = useState(Version.Five16)
   const { clientInstance } = useRemix()
-
-  useEffect(() => {
-    const loadCompiler = async (compilerUrl: string) => {
-      const compilerInstanceValue = new Compiler(clientInstance)
-      setCompilerInstance(compilerInstanceValue)
-
-      await compilerInstanceValue.loadVersion(compilerUrl)
-      setCompilerLoaded(true)
-      log("Compiler loaded correctly")
-    }
-
-    if (!compilerInstance && clientInstance) {
-      const compilerUrl = COMPILER_VERSIONS.find(
-        (s) => s.version === selectedCompilerVersion
-      )?.url
-      if (!compilerUrl) {
-        throw new Error("Invalid compiler version")
-      }
-      loadCompiler(compilerUrl)
-    }
-  }, [
-    compilerLoaded,
-    clientInstance,
-    compilerInstance,
-    selectedCompilerVersion,
-  ])
+  const { compile: compileFromWorker, compilerLoaded, compilerVersions } = useCompiler()
 
   // controls
-  const [language, setLanguage] = useState(Language.Solidity)
-  const [, setSelectedEVMVersion] = useState(EVMVersion.homestead)
+  const fileLoaderInstance = new FileLoader(clientInstance)
+
+  const [language, setLanguage] = useState(LanguageEnum.Solidity)
+  const [, setSelectedEVMVersion] = useState(EVMVersionEnum.homestead)
   const [autoCompile, setAutocompile] = useState(false)
   const [optimize, setOptimize] = useState(false)
   const [showWarnings, setShowWarnings] = useState(false)
@@ -117,20 +51,15 @@ export const HomeView: React.FC = () => {
           setIsCompiling(true)
         }
       })
-      // const getCurrentFile = async () => {
-      //   const currentFile = await clientInstance.fileManager.getCurrentFile()
-      //   setCurrentFileName(currentFile)
-      // }
-      // getCurrentFile()
     }
   }, [clientInstance])
 
   const onChangeCompilerVersion = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCompilerVersion(e.target.value)
+    setSelectedCompilerVersion(e.target.value as Version)
   }
 
   const onChangeLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLanguage(e.target.value as Language)
+    setLanguage(e.target.value as LanguageEnum)
   }
 
   const onChangeRuns = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,7 +67,7 @@ export const HomeView: React.FC = () => {
   }
 
   const onChangeEvmVersion = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedEVMVersion(e.target.value as EVMVersion)
+    setSelectedEVMVersion(e.target.value as EVMVersionEnum)
   }
 
   const onCompileClick = () => {
@@ -150,7 +79,8 @@ export const HomeView: React.FC = () => {
   >(undefined)
 
   useEffect(() => {
-    if (isCompiling && compilerInstance) {
+
+    if (isCompiling) {
       const setStatusToLoading = () => {
         clientInstance.emit("statusChanged", {
           key: "loading",
@@ -213,16 +143,16 @@ export const HomeView: React.FC = () => {
 
         setStatusToLoading()
         await clearAnnotations()
-        // Pending: Set compiler version from Pragma
         const content = await clientInstance.fileManager.readFile(currentFile)
         const sources = { [currentFile]: { content } }
-        const result = await compilerInstance.compile(sources as any, {
-          // TODO FIx this types
+
+        const result = await compileFromWorker(selectedCompilerVersion, sources as any, {
           runs,
           optimize,
           evmVersion: null, // TODO FIx this types
           language,
-        })
+        }, fileLoaderInstance)
+
         log("CompilationResult", result)
         setCompilationResult(result)
         setIsCompiling(false)
@@ -249,7 +179,6 @@ export const HomeView: React.FC = () => {
   }, [
     isCompiling,
     clientInstance,
-    compilerInstance,
     currentFileName,
     language,
     optimize,
@@ -292,14 +221,12 @@ export const HomeView: React.FC = () => {
                   onChange={onChangeCompilerVersion}
                   className="custom-select"
                   id="versionSelector"
-                  disabled={true}
                   defaultValue={selectedCompilerVersion}
                 >
-                  {COMPILER_VERSIONS.map((item) => {
+                  {compilerVersions.map((item) => {
                     return (
                       <option
                         key={item.version}
-                        disabled={true}
                         value={item.version}
                       >
                         {item.version}
@@ -341,7 +268,7 @@ export const HomeView: React.FC = () => {
                   id="evmVersionSelector"
                   disabled={true}
                 >
-                  {Object.entries(EVMVersion).map((item) => {
+                  {Object.entries(EVMVersionEnum).map((item) => {
                     const key = item[0]
                     const value = item[1]
                     return (
