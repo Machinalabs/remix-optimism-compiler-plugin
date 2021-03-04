@@ -191,7 +191,7 @@ export const HomeView: React.FC = () => {
         compile()
       }, 1000)
     }
-  }, [
+  }, [ // eslint-disable-line
     isCompiling,
     clientInstance,
     currentFileName,

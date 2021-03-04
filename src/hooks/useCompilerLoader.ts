@@ -75,7 +75,7 @@ export const useCompiler = () => {
     }
 
     loadCompilerVersions()
-  }, [])
+  }, []) // eslint-disable-line
 
   const compileJSON = async (
     version: Version,
