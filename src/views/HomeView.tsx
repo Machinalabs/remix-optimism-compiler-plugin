@@ -123,7 +123,6 @@ export const HomeView: React.FC = () => {
         })
       }
 
-
       const addAnnotations = async (errors: CompilationError[]) => {
         errors.forEach(async (item) => {
           // extract line / column
@@ -192,11 +191,10 @@ export const HomeView: React.FC = () => {
         if (result.errors) {
           // si tiene al menos un error -> error
           // else -> warning
-          const isErrorError = result.errors.find(s => s.severity === 'error')
+          const isErrorError = result.errors.find((s) => s.severity === "error")
           if (isErrorError) {
             setStatusToFailed()
-          }
-          else {
+          } else {
             setStatusToWarning()
           }
           await addAnnotations(result.errors)
@@ -209,7 +207,8 @@ export const HomeView: React.FC = () => {
         compile()
       }, 1000)
     }
-  }, [ // eslint-disable-line
+  }, [
+    // eslint-disable-line
     isCompiling,
     clientInstance,
     currentFileName,
