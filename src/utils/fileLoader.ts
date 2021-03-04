@@ -1,4 +1,4 @@
-import { Source, } from "../types"
+import { Source } from "../types"
 import { RemixClientInstanceType } from "../hooks"
 
 export class FileLoader {

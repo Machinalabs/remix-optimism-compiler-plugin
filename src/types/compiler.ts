@@ -11,7 +11,7 @@ export interface Source {
 export type Language = "Solidity" | "Yul"
 
 export enum LanguageEnum {
-  Solidity = "Solidity"
+  Solidity = "Solidity",
 }
 
 export interface SourceWithTarget {

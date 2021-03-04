@@ -3,8 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSync } from "@fortawesome/free-solid-svg-icons"
 import { CompilationError, CompilationResult } from "@remixproject/plugin-api"
 
-import { FileLoader, getCleanedFileName, hasSolidityExtension, log } from "../utils"
-import { EVMVersionEnum, LanguageEnum } from '../types'
+import {
+  FileLoader,
+  getCleanedFileName,
+  hasSolidityExtension,
+  log,
+} from "../utils"
+import { EVMVersionEnum, LanguageEnum } from "../types"
 import { useRemix, useCompiler, Version } from "../hooks"
 
 import { ResultsSection, StyledSection } from "./components"
@@ -12,9 +17,15 @@ import { ResultsSection, StyledSection } from "./components"
 const DEFAULT_RUNS = 200
 
 export const HomeView: React.FC = () => {
-  const [selectedCompilerVersion, setSelectedCompilerVersion] = useState(Version.Five16)
+  const [selectedCompilerVersion, setSelectedCompilerVersion] = useState(
+    Version.Five16
+  )
   const { clientInstance } = useRemix()
-  const { compile: compileFromWorker, compilerLoaded, compilerVersions } = useCompiler()
+  const {
+    compile: compileFromWorker,
+    compilerLoaded,
+    compilerVersions,
+  } = useCompiler()
 
   // controls
   const fileLoaderInstance = new FileLoader(clientInstance)
@@ -79,7 +90,6 @@ export const HomeView: React.FC = () => {
   >(undefined)
 
   useEffect(() => {
-
     if (isCompiling) {
       const setStatusToLoading = () => {
         clientInstance.emit("statusChanged", {
@@ -146,12 +156,17 @@ export const HomeView: React.FC = () => {
         const content = await clientInstance.fileManager.readFile(currentFile)
         const sources = { [currentFile]: { content } }
 
-        const result = await compileFromWorker(selectedCompilerVersion, sources as any, {
-          runs,
-          optimize,
-          evmVersion: null, // TODO FIx this types
-          language,
-        }, fileLoaderInstance)
+        const result = await compileFromWorker(
+          selectedCompilerVersion,
+          sources as any,
+          {
+            runs,
+            optimize,
+            evmVersion: null, // TODO FIx this types
+            language,
+          },
+          fileLoaderInstance
+        )
 
         log("CompilationResult", result)
         setCompilationResult(result)
@@ -225,10 +240,7 @@ export const HomeView: React.FC = () => {
                 >
                   {compilerVersions.map((item) => {
                     return (
-                      <option
-                        key={item.version}
-                        value={item.version}
-                      >
+                      <option key={item.version} value={item.version}>
                         {item.version}
                       </option>
                     )

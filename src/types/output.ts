@@ -24,10 +24,10 @@ export interface EventDescription {
   type: "event"
   name: string
   inputs: ABIParameter &
-  {
-    /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
-    indexed: boolean
-  }[]
+    {
+      /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
+      indexed: boolean
+    }[]
   /** true if the event was declared as anonymous. */
   anonymous: boolean
 }

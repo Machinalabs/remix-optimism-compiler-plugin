@@ -4,13 +4,13 @@ export interface CondensedCompilationInput {
   /** e.g: 0.6.8+commit.0bbfe453 */
   version: string
   evmVersion?:
-  | "istanbul"
-  | "petersburg"
-  | "constantinople"
-  | "byzantium"
-  | "spuriousDragon"
-  | "tangerineWhistle"
-  | "homestead"
+    | "istanbul"
+    | "petersburg"
+    | "constantinople"
+    | "byzantium"
+    | "spuriousDragon"
+    | "tangerineWhistle"
+    | "homestead"
 }
 
 //////////////
@@ -23,11 +23,11 @@ export interface CompilerSettings {
   optimizer?: Partial<CompilerOptimizer>
   /** Version of the EVM to compile for. Affects type checking and code generation */
   evmVersion:
-  | "homestead"
-  | "tangerineWhistle"
-  | "spuriousDragon"
-  | "byzantium"
-  | "constantinople"
+    | "homestead"
+    | "tangerineWhistle"
+    | "spuriousDragon"
+    | "byzantium"
+    | "constantinople"
   /** Metadata settings */
   metadata?: CompilerMetadata
   /** Addresses of the libraries. If not all libraries are given here, it can result in unlinked objects whose output data is different. */
