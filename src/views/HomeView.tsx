@@ -111,9 +111,18 @@ export const HomeView: React.FC = () => {
         clientInstance.emit("statusChanged", {
           key: "failed",
           type: "error",
-          title: `Compilation finished`,
+          title: `Compilation failed`,
         })
       }
+
+      const setStatusToWarning = () => {
+        clientInstance.emit("statusChanged", {
+          key: "failed",
+          type: "warning",
+          title: `Compilation with warning`,
+        })
+      }
+
 
       const addAnnotations = async (errors: CompilationError[]) => {
         errors.forEach(async (item) => {
@@ -179,8 +188,17 @@ export const HomeView: React.FC = () => {
           result
         )
 
+        console.log("Errors", result.errors)
         if (result.errors) {
-          setStatusToFailed()
+          // si tiene al menos un error -> error
+          // else -> warning
+          const isErrorError = result.errors.find(s => s.severity === 'error')
+          if (isErrorError) {
+            setStatusToFailed()
+          }
+          else {
+            setStatusToWarning()
+          }
           await addAnnotations(result.errors)
         } else {
           setStatusToSuccess()

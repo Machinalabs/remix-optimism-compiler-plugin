@@ -115,10 +115,8 @@ export const useCompiler = () => {
     return new Promise(async (resolve, reject) => {
       try {
         await fileLoader.gatherImports(files) // this should be pure...
-        console.log("Files after", files)
         const input: SourceWithTarget = { sources: files }
         const result = compileJSON(version, input, options)
-        console.log("result", result)
         resolve(result)
       } catch (error) {
         reject(error)
