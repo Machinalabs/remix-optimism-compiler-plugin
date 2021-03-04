@@ -4,7 +4,7 @@
   "description": "Remix Optimism compiler",
   "author": "MachinaLabs",
   "dependencies": {
-    "@eth-optimism/solc": "^0.6.12-alpha.0",
+    "@eth-optimism/solc": "^0.7.6-alpha.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
     "@fortawesome/free-regular-svg-icons": "^5.15.1",
@@ -22,7 +22,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-select-event": "^5.1.0",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "workerize-loader": "^1.3.0"
   },
   "scripts": {
     "start": "PORT=8080 react-scripts start",
