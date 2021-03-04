@@ -1,4 +1,4 @@
-var wrapper = require("@eth-optimism/solc/wrapper")
+const wrapper = require("@eth-optimism/solc/wrapper") // tslint:disable-line
 
 let compileJSON: ((input: any) => string) | null = (input) => {
   return ""
