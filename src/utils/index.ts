@@ -1,3 +1,3 @@
 export * from "./debug"
 export * from "./files"
-export * from "./compiler"
+export * from "./fileLoader"

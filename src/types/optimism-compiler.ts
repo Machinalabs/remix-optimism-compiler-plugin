@@ -1,6 +1,6 @@
-import { CondensedCompilationInput, SourcesInput } from "./input"
-import { CompilationFileSources, CompilationResult } from "./output"
+import { CondensedCompilationInput } from "./input"
 import { StatusEvents, Api } from "@remixproject/plugin-utils"
+import { CompilationFileSources, CompilationResult, SourcesInput } from "@remixproject/plugin-api"
 
 export interface OptimismCompilerApi extends Api {
   events: {

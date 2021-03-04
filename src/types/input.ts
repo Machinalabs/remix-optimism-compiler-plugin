@@ -1,50 +1,16 @@
-export interface CompilationInput {
-  /** Source code language */
-  language: "Solidity" | "Vyper" | "lll" | "assembly" | "yul"
-  sources: SourcesInput
-  settings?: CompilerSettings
-  outputSelection?: CompilerOutputSelection
-}
-
 export interface CondensedCompilationInput {
   language: "Solidity" | "Vyper" | "lll" | "assembly" | "yul"
   optimize: boolean
   /** e.g: 0.6.8+commit.0bbfe453 */
   version: string
   evmVersion?:
-    | "istanbul"
-    | "petersburg"
-    | "constantinople"
-    | "byzantium"
-    | "spuriousDragon"
-    | "tangerineWhistle"
-    | "homestead"
-}
-
-/////////////
-// SOURCES //
-/////////////
-
-export interface SourceInputUrls {
-  /** Hash of the source file. It is used to verify the retrieved content imported via URLs */
-  keccak256?: string
-  /**
-   * URL(s) to the source file.
-   * URL(s) should be imported in this order and the result checked against the
-   * keccak256 hash (if available). If the hash doesn't match or none of the
-   * URL(s) result in success, an error should be raised.
-   */
-  urls: string[]
-}
-export interface SourceInputContent {
-  /** Hash of the source file. */
-  keccak256?: string
-  /** Literal contents of the source file */
-  content: string
-}
-
-export interface SourcesInput {
-  [contractName: string]: SourceInputContent | SourceInputUrls
+  | "istanbul"
+  | "petersburg"
+  | "constantinople"
+  | "byzantium"
+  | "spuriousDragon"
+  | "tangerineWhistle"
+  | "homestead"
 }
 
 //////////////
@@ -57,11 +23,11 @@ export interface CompilerSettings {
   optimizer?: Partial<CompilerOptimizer>
   /** Version of the EVM to compile for. Affects type checking and code generation */
   evmVersion:
-    | "homestead"
-    | "tangerineWhistle"
-    | "spuriousDragon"
-    | "byzantium"
-    | "constantinople"
+  | "homestead"
+  | "tangerineWhistle"
+  | "spuriousDragon"
+  | "byzantium"
+  | "constantinople"
   /** Metadata settings */
   metadata?: CompilerMetadata
   /** Addresses of the libraries. If not all libraries are given here, it can result in unlinked objects whose output data is different. */
