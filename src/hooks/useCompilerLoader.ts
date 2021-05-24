@@ -16,6 +16,7 @@ export enum Version {
   Five16 = "0.5.16",
   Six12 = "0.6.12",
   Seven7 = "0.7.6",
+  Eight4 = "0.8.4"
 }
 
 interface CompilerOptions {
@@ -38,6 +39,10 @@ const COMPILER_VERSIONS: CompilerVersion[] = [
     version: Version.Seven7,
     url: "https://ethereum-optimism-compilers.surge.sh/solc-js-0-7-6.js",
   },
+  {
+    version: Version.Eight4,
+    url: "https://ethereum-optimism-compilers.surge.sh/solc-js-0-8-4.js",
+  }
 ]
 
 const getCompilerUrl = (version: Version) =>
