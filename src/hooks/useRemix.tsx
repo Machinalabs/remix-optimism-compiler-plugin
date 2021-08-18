@@ -5,17 +5,10 @@ import React, {
   useState,
 } from "react"
 
-import { PluginClient } from "@remixproject/plugin"
-import { IRemixApi } from "@remixproject/plugin-api"
-import { Api, PluginApi } from "@remixproject/plugin-utils"
-
-import { ThemeType } from "../types"
+import { ThemeType, RemixClientInstanceType } from "../types"
 import { log } from "../utils"
 
 import { RemixClient } from "./RemixClient"
-
-export type RemixClientInstanceType = PluginApi<Readonly<IRemixApi>> &
-  PluginClient<Api, Readonly<IRemixApi>>
 
 interface IRemixProvider {
   clientInstance: RemixClientInstanceType

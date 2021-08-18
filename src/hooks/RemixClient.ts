@@ -1,12 +1,22 @@
 import { PluginClient } from "@remixproject/plugin"
-import { createClient } from "@remixproject/plugin-iframe"
+import { createClient } from "@remixproject/plugin-webview";
 
 export class RemixClient extends PluginClient {
-  // methods = ["compileTest"]
+  private compilerCallback: any
 
   constructor() {
-    super() // profile pending
+    super()
 
     createClient(this)
+  }
+
+  public setCompilerCallback(compileFunc: any) {
+    this.compilerCallback = compileFunc
+  }
+
+  public async compile(fileName: string) {
+    if (this.compilerCallback) {
+      await this.compilerCallback(fileName)
+    }
   }
 }

@@ -2,29 +2,11 @@ import { CompilationResult } from "@remixproject/plugin-api"
 import { useEffect, useState } from "react"
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import createWorker from "workerize-loader!../workers/compiler.worker"
-import { EVMVersion, Language, Source, SourceWithTarget } from "../types"
+import { Source, SourceWithTarget, CompilerOptions, CompilerVersion, Version } from "../types"
 import { FileLoader } from "../utils"
 import compilerInput from "../utils/compiler-input"
 import * as CompilerWorker from "../workers/compiler.worker"
 
-type CompilerVersion = {
-  version: Version
-  url: string
-}
-
-export enum Version {
-  Five16 = "0.5.16",
-  Six12 = "0.6.12",
-  Seven7 = "0.7.6",
-  Eight4 = "0.8.4"
-}
-
-interface CompilerOptions {
-  optimize: boolean
-  runs: number
-  evmVersion: EVMVersion
-  language: Language
-}
 
 const COMPILER_VERSIONS: CompilerVersion[] = [
   {
@@ -42,7 +24,7 @@ const COMPILER_VERSIONS: CompilerVersion[] = [
   {
     version: Version.Eight4,
     url: "https://ethereum-optimism-compilers.surge.sh/solc-js-0-8-4.js",
-  }
+  },
 ]
 
 const getCompilerUrl = (version: Version) =>
@@ -75,8 +57,6 @@ export const useCompiler = () => {
       await Promise.all(promises)
 
       setCompilerLoaded(true)
-
-      console.log("Compilers Loaded")
     }
 
     loadCompilerVersions()

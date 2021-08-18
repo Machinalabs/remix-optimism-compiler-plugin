@@ -9,8 +9,8 @@ import {
   hasSolidityExtension,
   log,
 } from "../utils"
-import { EVMVersionEnum, LanguageEnum } from "../types"
-import { useRemix, useCompiler, Version } from "../hooks"
+import { EVMVersionEnum, LanguageEnum, Version } from "../types"
+import { useRemix, useCompiler } from "../hooks"
 
 import { ResultsSection, StyledSection } from "./components"
 
@@ -91,123 +91,130 @@ export const HomeView: React.FC = () => {
 
   useEffect(
     () => {
-      if (isCompiling) {
-        const setStatusToLoading = () => {
-          clientInstance.emit("statusChanged", {
-            key: "loading",
-            type: "info",
-            title: `Compilation in progress`,
-          })
-        }
+      const setStatusToLoading = () => {
+        clientInstance.emit("statusChanged", {
+          key: "loading",
+          type: "info",
+          title: `Compilation in progress`,
+        })
+      }
 
-        const setStatusToSuccess = () => {
-          clientInstance.emit("statusChanged", {
-            key: "succeed",
-            type: "success",
-            title: `Compilation finished`,
-          })
-        }
+      const setStatusToSuccess = () => {
+        clientInstance.emit("statusChanged", {
+          key: "succeed",
+          type: "success",
+          title: `Compilation finished`,
+        })
+      }
 
-        const setStatusToFailed = () => {
-          clientInstance.emit("statusChanged", {
-            key: "failed",
-            type: "error",
-            title: `Compilation failed`,
-          })
-        }
+      const setStatusToFailed = () => {
+        clientInstance.emit("statusChanged", {
+          key: "failed",
+          type: "error",
+          title: `Compilation failed`,
+        })
+      }
 
-        const setStatusToWarning = () => {
-          clientInstance.emit("statusChanged", {
-            key: "failed",
-            type: "warning",
-            title: `Compilation with warning`,
-          })
-        }
+      const setStatusToWarning = () => {
+        clientInstance.emit("statusChanged", {
+          key: "failed",
+          type: "warning",
+          title: `Compilation with warning`,
+        })
+      }
 
-        const addAnnotations = async (errors: CompilationError[]) => {
-          errors.forEach(async (item) => {
-            // extract line / column
-            if (item.formattedMessage) {
-              let position = item.formattedMessage.match(
-                /^(.*?):([0-9]*?):([0-9]*?)?/
-              )
-              const errorLine = position ? parseInt(position[2], 10) - 1 : -1
-              const errorColumn = position ? parseInt(position[3], 10) : -1
-
-              position = item.formattedMessage.match(
-                /^(https:.*?|http:.*?|.*?):/
-              )
-              // To think if I need this: const errorFile = position ? position[1] : ''
-
-              await clientInstance.call("editor", "addAnnotation" as any, {
-                row: errorLine,
-                column: errorColumn,
-                text: item.formattedMessage,
-                type: "error",
-              })
-            }
-          })
-        }
-
-        const clearAnnotations = async () => {
-          await clientInstance.call("editor", "clearAnnotations" as any)
-        }
-
-        const compile = async () => {
-          const currentFile = currentFileName
-            ? currentFileName
-            : await clientInstance.fileManager.getCurrentFile()
-
-          if (!hasSolidityExtension(currentFile)) {
-            return
-          }
-
-          setStatusToLoading()
-          await clearAnnotations()
-          const content = await clientInstance.fileManager.readFile(currentFile)
-          const sources = { [currentFile]: { content } }
-
-          const result = await compileFromWorker(
-            selectedCompilerVersion,
-            sources as any,
-            {
-              runs,
-              optimize,
-              evmVersion: null, // TODO FIx this types
-              language,
-            },
-            fileLoaderInstance
-          )
-
-          log("CompilationResult", result)
-          setCompilationResult(result)
-          setIsCompiling(false)
-          clientInstance.emit(
-            "compilationFinished",
-            currentFileName,
-            sources,
-            selectedCompilerVersion,
-            result
-          )
-
-          console.log("Errors", result.errors)
-          if (result.errors) {
-            // si tiene al menos un error -> error
-            // else -> warning
-            const isErrorError = result.errors.find(
-              (s) => s.severity === "error"
+      const addAnnotations = async (errors: CompilationError[]) => {
+        errors.forEach(async (item) => {
+          // extract line / column
+          if (item.formattedMessage) {
+            let position = item.formattedMessage.match(
+              /^(.*?):([0-9]*?):([0-9]*?)?/
             )
-            if (isErrorError) {
-              setStatusToFailed()
-            } else {
-              setStatusToWarning()
-            }
-            await addAnnotations(result.errors)
-          } else {
-            setStatusToSuccess()
+            const errorLine = position ? parseInt(position[2], 10) - 1 : -1
+            const errorColumn = position ? parseInt(position[3], 10) : -1
+
+            position = item.formattedMessage.match(
+              /^(https:.*?|http:.*?|.*?):/
+            )
+            // To think if I need this: const errorFile = position ? position[1] : ''
+
+            await clientInstance.call("editor", "addAnnotation" as any, {
+              row: errorLine,
+              column: errorColumn,
+              text: item.formattedMessage,
+              type: "error",
+            })
           }
+        })
+      }
+
+      const clearAnnotations = async () => {
+        await clientInstance.call("editor", "clearAnnotations" as any)
+      }
+
+      const compile = async () => {
+        const currentFile = currentFileName
+          ? currentFileName
+          : await clientInstance.fileManager.getCurrentFile()
+
+        await compileInternal(currentFile)
+      }
+
+      const compileInternal = async (currentFile: string) => {
+        if (!hasSolidityExtension(currentFile)) {
+          return
         }
 
+        setStatusToLoading()
+        await clearAnnotations()
+        const content = await clientInstance.fileManager.readFile(currentFile)
+        const sources = { [currentFile]: { content } }
+
+        const result = await compileFromWorker(
+          selectedCompilerVersion,
+          sources as any,
+          {
+            runs,
+            optimize,
+            evmVersion: null, // TODO FIx this types
+            language,
+          },
+          fileLoaderInstance
+        )
+
+        log("CompilationResult", result)
+        setCompilationResult(result)
+        setIsCompiling(false)
+        clientInstance.emit(
+          "compilationFinished",
+          currentFileName,
+          sources,
+          selectedCompilerVersion,
+          result
+        )
+
+        if (result.errors) {
+          // si tiene al menos un error -> error
+          // else -> warning
+          const isErrorError = result.errors.find(
+            (s) => s.severity === "error"
+          )
+          if (isErrorError) {
+            setStatusToFailed()
+          } else {
+            setStatusToWarning()
+          }
+          await addAnnotations(result.errors)
+        } else {
+          setStatusToSuccess()
+        }
+      }
+
+      if (clientInstance) {
+        (clientInstance as any).setCompilerCallback(compileInternal)
+      }
+
+      if (isCompiling) {
         setTimeout(() => {
           compile()
         }, 1000)
