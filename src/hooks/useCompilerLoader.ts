@@ -2,11 +2,16 @@ import { CompilationResult } from "@remixproject/plugin-api"
 import { useEffect, useState } from "react"
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import createWorker from "workerize-loader!../workers/compiler.worker"
-import { Source, SourceWithTarget, CompilerOptions, CompilerVersion, Version } from "../types"
+import {
+  Source,
+  SourceWithTarget,
+  CompilerOptions,
+  CompilerVersion,
+  Version,
+} from "../types"
 import { FileLoader } from "../utils"
 import compilerInput from "../utils/compiler-input"
 import * as CompilerWorker from "../workers/compiler.worker"
-
 
 const COMPILER_VERSIONS: CompilerVersion[] = [
   {

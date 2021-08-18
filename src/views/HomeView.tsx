@@ -133,9 +133,7 @@ export const HomeView: React.FC = () => {
             const errorLine = position ? parseInt(position[2], 10) - 1 : -1
             const errorColumn = position ? parseInt(position[3], 10) : -1
 
-            position = item.formattedMessage.match(
-              /^(https:.*?|http:.*?|.*?):/
-            )
+            position = item.formattedMessage.match(/^(https:.*?|http:.*?|.*?):/)
             // To think if I need this: const errorFile = position ? position[1] : ''
 
             await clientInstance.call("editor", "addAnnotation" as any, {
@@ -196,9 +194,7 @@ export const HomeView: React.FC = () => {
         if (result.errors) {
           // si tiene al menos un error -> error
           // else -> warning
-          const isErrorError = result.errors.find(
-            (s) => s.severity === "error"
-          )
+          const isErrorError = result.errors.find((s) => s.severity === "error")
           if (isErrorError) {
             setStatusToFailed()
           } else {
@@ -211,7 +207,7 @@ export const HomeView: React.FC = () => {
       }
 
       if (clientInstance) {
-        (clientInstance as any).setCompilerCallback(compileInternal)
+        ;(clientInstance as any).setCompilerCallback(compileInternal)
       }
 
       if (isCompiling) {
